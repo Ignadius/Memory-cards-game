@@ -30,33 +30,30 @@ function App() {
   };
 
   //handle a choice
-  const handleChoice = (card) => {
-    choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
-    console.log(card);
-  };
+ const handleChoice = (card) => {
+  // Prevent selecting the same card that is already choiceOne
+  if (choiceOne && choiceOne.id === card.id) return;
+  
+  choiceOne ? setChoiceTwo(card) : setChoiceOne(card);
+};
 
   //compare the 2 selected cards
-  useEffect(() => {
-    if (choiceOne && choiceTwo) {
-      setDisabled(true);
-      if (choiceOne.src === choiceTwo.src) { //From here onwards, the If statement, checks if there is a match
-        //console.log('Those cards match')
-        setCards((prevCards) => {
-          return prevCards.map((card) => {
-            if (card.src === choiceOne.src) {
-              return { ...card, matched: true };
-            } else {
-              return card;
-            }
-          });
-        });
-        resetTurn();
-      } else {
-        //console.log('Those cards do not match')
-        setTimeout(() => resetTurn(), 1000);
-      }
+ useEffect(() => {
+  if (choiceOne && choiceTwo) {
+    setDisabled(true);
+    let timeoutId;
+
+    if (choiceOne.src === choiceTwo.src) {
+      // ... your existing match logic
+      resetTurn();
+    } else {
+      timeoutId = setTimeout(() => resetTurn(), 1000);
     }
-  }, [choiceOne, choiceTwo]);
+    
+    // Cleanup function
+    return () => clearTimeout(timeoutId);
+  }
+}, [choiceOne, choiceTwo]);
 
   console.log(cards);
 
